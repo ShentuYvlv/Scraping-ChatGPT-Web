@@ -2,7 +2,6 @@ import time
 import json
 import os
 import datetime
-import re
 from playwright.sync_api import sync_playwright
 
 # ==========================================
@@ -81,11 +80,16 @@ JS_HOOK_CODE = """
 def clean_text_final(text):
     if not text:
         return ""
+    # 基础清理，去除转义符
+    # 注意：在内存中处理时，\n 就是换行符，不需要 replace('\\n', '\n')
+    # 但如果为了保存到 JSON 字符串里不乱，保持原样即可，JSON dump 会自动转义
+    # 这里我们只处理一些不需要的字符
     return text.strip()
 
 def extract_search_info(content_list):
     """
     从 content_list 中提取搜索结果信息 (References)。
+    返回: (queries_list, references_list)
     """
     queries = []
     references = []
@@ -110,6 +114,7 @@ def extract_search_info(content_list):
                             "sitename": clean_text_final(card.get("sitename", "")),
                             "publish_time": card.get("publish_time_second", "")
                         }
+                        # 只保留有 URL 或标题的有效引用
                         if ref_item["url"] or ref_item["title"]:
                             references.append(ref_item)
                             
@@ -118,81 +123,69 @@ def extract_search_info(content_list):
 def parse_doubao_raw_data(raw_data: str) -> dict:
     """
     解析豆包的 SSE 原始数据，提取回复、搜索关键词和引用。
-    使用正则提取 JSON，更加稳健。
     """
-    # 匹配行首的 data: {...}
-    json_pattern = re.compile(r'^data:\s*(\{.*\})$', re.MULTILINE)
-    json_strs = json_pattern.findall(raw_data)
+    # 关键修正：内存中的 raw_data 换行符是 \n，不是 \\n
+    chunks = raw_data.split('\n')
     
-    # 如果正则没匹配到，尝试降级为简单的 split
-    if not json_strs:
-        chunks = raw_data.split('\n')
-        for chunk in chunks:
-            chunk = chunk.strip()
-            if chunk.startswith("data: "):
-                json_strs.append(chunk[6:])
-
     reply_parts = []
     all_search_queries = []
     all_references = []
     seen_urls = set()
     
-    for json_str in json_strs:
-        if json_str == "{}": continue
-        
-        try:
-            data_obj = json.loads(json_str)
+    for chunk in chunks:
+        chunk = chunk.strip()
+        if chunk.startswith("data: "):
+            json_str = chunk[6:] # 去掉 "data: "
+            if json_str == "{}": continue
             
-            def process_content_list(c_list):
-                local_reply_parts = []
-                local_queries = []
-                local_refs = []
+            try:
+                data_obj = json.loads(json_str)
                 
-                if isinstance(c_list, list):
-                    # 1. 提取文本
-                    for item in c_list:
-                        if "content" in item and "loading_block" in item["content"]:
-                            continue
-                            
-                        if "content" in item and "text_block" in item["content"]:
-                            text = item["content"]["text_block"].get("text", "")
-                            if text:
-                                local_reply_parts.append(text)
+                def process_content_list(c_list):
+                    local_reply_parts = []
+                    local_queries = []
+                    local_refs = []
                     
-                    # 2. 提取搜索信息
-                    q, refs = extract_search_info(c_list)
-                    local_queries.extend(q)
-                    local_refs.extend(refs)
-                    
-                return local_reply_parts, local_queries, local_refs
-
-            # Case A: message -> content
-            if "message" in data_obj and "content" in data_obj["message"]:
-                try:
-                    content_raw = data_obj["message"]["content"]
-                    if isinstance(content_raw, str):
-                        content_list = json.loads(content_raw)
-                    else:
-                        content_list = content_raw
+                    if isinstance(c_list, list):
+                        # 1. 提取文本
+                        for item in c_list:
+                            if "content" in item and "loading_block" in item["content"]:
+                                continue
+                                
+                            if "content" in item and "text_block" in item["content"]:
+                                text = item["content"]["text_block"].get("text", "")
+                                if text:
+                                    local_reply_parts.append(text)
                         
-                    r_parts, qs, refs = process_content_list(content_list)
-                    reply_parts.extend(r_parts)
-                    all_search_queries.extend(qs)
-                    all_references.extend(refs)
-                except: pass
-            
-            # Case B: patch_op
-            if "patch_op" in data_obj:
-                for op in data_obj["patch_op"]:
-                    if "patch_value" in op:
-                        val = op["patch_value"]
-                        if "content_block" in val:
-                            r_parts, qs, refs = process_content_list(val["content_block"])
-                            reply_parts.extend(r_parts)
-                            all_search_queries.extend(qs)
-                            all_references.extend(refs)
-        except:
-            pass
+                        # 2. 提取搜索信息
+                        q, refs = extract_search_info(c_list)
+                        local_queries.extend(q)
+                        local_refs.extend(refs)
+                        
+                    return local_reply_parts, local_queries, local_refs
+
+                # Case A: message -> content
+                if "message" in data_obj and "content" in data_obj["message"]:
+                    try:
+                        content_list = json.loads(data_obj["message"]["content"])
+                        r_parts, qs, refs = process_content_list(content_list)
+                        reply_parts.extend(r_parts)
+                        all_search_queries.extend(qs)
+                        all_references.extend(refs)
+                    except: pass
+                
+                # Case B: patch_op
+                if "patch_op" in data_obj:
+                    for op in data_obj["patch_op"]:
+                        if "patch_value" in op:
+                            val = op["patch_value"]
+                            if "content_block" in val:
+                                r_parts, qs, refs = process_content_list(val["content_block"])
+                                reply_parts.extend(r_parts)
+                                all_search_queries.extend(qs)
+                                all_references.extend(refs)
+            except:
+                pass
 
     full_reply = "".join(reply_parts)
     full_reply = clean_text_final(full_reply)
@@ -221,7 +214,7 @@ def parse_doubao_raw_data(raw_data: str) -> dict:
     }
 
 def save_result(prompt, raw_data, url):
-    """保存数据到文件，返回是否保存成功（是否有有效内容）"""
+    """保存数据到文件"""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     
     # 使用新的解析函数
@@ -233,11 +226,8 @@ def save_result(prompt, raw_data, url):
     # 调试信息
     if not reply_text:
         print(f"[WARN] ⚠️ 解析后回复为空！原始数据长度: {len(raw_data)}")
-        # 调试用：保存失败的 raw_data
-        debug_file = os.path.join(OUTPUT_DIR, f"debug_failed_{timestamp}.txt")
-        with open(debug_file, "w", encoding="utf-8") as f:
-            f.write(raw_data)
-        return False
+        # 可以选择把前500个字符打出来看看
+        # print(f"[DEBUG] 原始数据预览: {raw_data[:500]}")
     else:
         print(f"[INFO] 解析成功，回复长度: {len(reply_text)}")
 
@@ -255,10 +245,9 @@ def save_result(prompt, raw_data, url):
         "full_raw_data": raw_data 
     }
     with open(json_filename, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry, ensure_ascii=False) + "\\n")
+        f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
         
     print(f"[SAVE] ✅ 已追加到: {json_filename}")
-    return True
 
 # ==========================================
 # 4. 凭证管理函数
@@ -386,107 +375,73 @@ def run_scraper():
         
         print(f"[INIT] Loaded {len(questions)} prompts.")
         
-        for idx, q in enumerate(questions):
+        for q in questions:
             print(f"\\n{'='*50}")
-            print(f"[ACTION] ({idx+1}/{len(questions)}) 开启新对话并提问: {q}")
+            print(f"[ACTION] 提问: {q}")
             
-            # 循环重试当前问题，直到成功
-            while True:
-                # === 开启新对话 ===
+            # 清空 JS 里的缓存
+            page.evaluate("window.__captured_requests__ = []")
+            
+            # 输入并发送
+            try:
+                input_box = page.locator('textarea[data-testid="chat_input_input"]').first
+                input_box.click()
+                input_box.fill(q)
+                time.sleep(0.5)
+                page.keyboard.press("Enter")
+            except Exception as e:
+                print(f"[ERROR] 发送失败: {e}")
+                continue
+                
+            print("[WAIT] 等待回答生成...")
+            
+            # 轮询检测是否拦截到数据
+            start_time = time.time()
+            success = False
+            
+            while time.time() - start_time < 120: # 给足时间等待思考和生成
                 try:
-                    print("[NAV] 正在跳转首页以开启新对话...")
-                    page.goto("https://www.doubao.com/chat/")
-                    
-                    # 尝试等待输入框
-                    try:
-                        page.wait_for_selector('textarea[data-testid="chat_input_input"]', timeout=5000)
-                    except:
-                        # 超时，说明可能被拦截
-                        print("\\n" + "!"*50)
-                        print("[BLOCK] 🛑 未检测到输入框，可能触发了验证码！")
-                        print("[ACTION] 请现在去浏览器窗口手动完成验证/登录。")
-                        print("[WAIT] 脚本正在无限期等待输入框恢复，完成后将自动继续...")
-                        print("!"*50 + "\\n")
+                    # 检查 hook 是否还存在 (页面可能刷新了)
+                    hook_status = page.evaluate("() => typeof window.__captured_requests__")
+                    if hook_status == 'undefined':
+                        print("[WARN] Hook 丢失 (页面可能刷新)，重新初始化...")
+                        page.evaluate("window.__captured_requests__ = []")
                         
-                        # 死等输入框出现
-                        page.wait_for_selector('textarea[data-testid="chat_input_input"]', timeout=0)
-                        print("[RESUME] ✅ 验证通过，输入框已出现，准备重试当前问题...")
-                        time.sleep(2) # 给一点缓冲时间
-                        continue # 重新开始当前问题的流程（重新跳转或直接输入）
-
-                    # 清空 JS 里的缓存
-                    page.evaluate("window.__captured_requests__ = []")
-                    
-                    # 输入并发送
-                    input_box = page.locator('textarea[data-testid="chat_input_input"]').first
-                    input_box.click()
-                    input_box.fill(q)
-                    time.sleep(0.5)
-                    page.keyboard.press("Enter")
+                    captured_list = page.evaluate("() => window.__captured_requests__")
                 except Exception as e:
-                    print(f"[ERROR] 操作失败: {e}，稍后重试...")
-                    time.sleep(2)
-                    continue
-                    
-                print("[WAIT] 等待回答生成...")
+                    # 忽略执行上下文被销毁的错误，稍后重试
+                    if "Execution context was destroyed" in str(e):
+                        print("[WARN] 页面上下文丢失 (可能正在跳转)，等待恢复...")
+                        time.sleep(1)
+                        continue
+                    else:
+                        print(f"[ERROR] 轮询出错: {e}")
+                        break
                 
-                # 轮询检测是否拦截到数据
-                start_time = time.time()
-                request_success = False
+                # 寻找 SSE_COMPLETE 标记
+                completed = [req for req in captured_list if req.get('type') == 'SSE_COMPLETE']
                 
-                while time.time() - start_time < 120: 
-                    try:
-                        # 检查 hook 是否还存在 (页面可能刷新了)
-                        hook_status = page.evaluate("() => typeof window.__captured_requests__")
-                        if hook_status == 'undefined':
-                            print("[WARN] Hook 丢失 (页面可能刷新)，重新初始化...")
-                            page.evaluate("window.__captured_requests__ = []")
-                            
-                        captured_list = page.evaluate("() => window.__captured_requests__")
-                    except Exception as e:
-                        # 忽略执行上下文被销毁的错误，稍后重试
-                        if "Execution context was destroyed" in str(e):
-                            time.sleep(1)
-                            continue
-                        else:
-                            print(f"[ERROR] 轮询出错: {e}")
-                            break
+                if completed:
+                    # 拿到最新的一条
+                    data_obj = completed[-1]
+                    raw_data = data_obj.get('fullData', '')
                     
-                    # 寻找 SSE_COMPLETE 标记
-                    completed = [req for req in captured_list if req.get('type') == 'SSE_COMPLETE']
-                    
-                    if completed:
-                        # 拿到最新的一条
-                        data_obj = completed[-1]
-                        raw_data = data_obj.get('fullData', '')
+                    if len(raw_data) > 500: 
+                        print(f"[SUCCESS] 抓取成功！长度: {len(raw_data)}")
                         
-                        if len(raw_data) > 500: 
-                            # === 关键修改：检查是否解析出有效内容 ===
-                            is_valid = save_result(q, raw_data, data_obj.get('url'))
-                            
-                            if is_valid:
-                                print(f"[SUCCESS] 抓取并解析成功！")
-                                request_success = True
-                                break # 跳出轮询等待
-                            else:
-                                print(f"[BLOCK] 🛑 抓取到数据但解析为空 (Reply Empty)，认定为验证码拦截！")
-                                # 清空当前捕获，避免重复处理这条坏数据
-                                page.evaluate("window.__captured_requests__ = []")
-                                # 触发重试逻辑：跳出轮询，外层 while True 会重新开始
-                                break 
-                        else:
-                            print(f"[INFO] 抓到短数据 ({len(raw_data)} chars)，可能是错误或心跳，继续等待...")
-                            page.evaluate("window.__captured_requests__ = []")
-                    
-                    time.sleep(1)
+                        # === 保存数据 ===
+                        save_result(q, raw_data, data_obj.get('url'))
+                        success = True
+                        break
+                    else:
+                        print(f"[INFO] 抓到短数据 ({len(raw_data)} chars)，可能是错误或心跳，继续等待...")
+                        page.evaluate("window.__captured_requests__ = []")
                 
-                if request_success:
-                    # 成功完成当前问题，跳出 while True，进入下一题
-                    break
-                else:
-                    print("[WARN] 本轮提问失败或被拦截，准备重试当前问题...")
-                    time.sleep(3)
-
+                time.sleep(1)
+            
+            if not success:
+                print("[WARN] 本轮提问超时或未抓取到有效数据。")
+            
             # 随机休息，避免被封
             time.sleep(3)
 
