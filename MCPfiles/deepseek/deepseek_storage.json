@@ -1,0 +1,31 @@
+{
+  "localStorage": {
+    "debugLiteModelChannel": "{\"value\":\"default\",\"__version\":\"0\"}",
+    "__close_idb_signal": "1765794232996.508",
+    "__appKit_@deepseek/chat_fg_enableLessMaxChunkInterval": "{\"value\":false,\"__version\":\"0\"}",
+    "thinkingEnabled": "{\"value\":false,\"__version\":\"2\"}",
+    "__tea_cache_tokens_20006317": "{\"web_id\":\"7582634352996042250\",\"user_unique_id\":\"faef128e-3052-477f-b1aa-148372996f99\",\"timestamp\":1766634761149,\"_type_\":\"default\"}",
+    ".thumbcache_6b2e5483f9d858d7c661c5e276b6a6ae": "",
+    "__appKit_@deepseek/chat_themePreference": "{\"value\":\"system\",\"__version\":\"0\"}",
+    "__appKit_@deepseek/chat_banner": "{\"value\":{\"closedBannerId\":null,\"cachedBannerOptions\":null},\"__version\":\"0\"}",
+    "__tea_cache_first_20006317": "1",
+    "__appKit_@deepseek/chat_debugPanelEnabled": "{\"value\":false,\"__version\":\"0\"}",
+    "__debugVersionUpdateDisabled": "{\"value\":false,\"__version\":\"20241018.1\"}",
+    "__appKit_@deepseek/chat_fg_enableHcaptcha": "{\"value\":false,\"__version\":\"0\"}",
+    "__ds_remote_feature_store": "{\"features\":{\"sse_auto_resume_timeout\":3000,\"chat_hcaptcha\":true},\"timestamp\":1765469635668,\"uuid\":\"4187cfd6-ec46-4247-a5ef-7426ae3a051d\",\"version\":1}",
+    "searchEnabled": "{\"value\":true,\"__version\":\"0\"}",
+    "__appKit_@deepseek/chat_debug": "{\"value\":false,\"__version\":\"0\"}",
+    "smidV2": "202512120013577ec580044b00bc37c3fcb099a362091500fecbd6eaf723620",
+    "APMPLUS675113": "JTdCJTIydXNlcklkJTIyOiUyMjBlNTI3MTQ5LTMxNmItNDFjNi05Y2MyLTc5ODRkMGU0ZTQyMyUyMiwlMjJkZXZpY2VJZCUyMjolMjJiOWNjZGFiOS04ZjBmLTQ4YmMtOGJkMS1mZjIxZGU4NTVjNGQlMjIsJTIyciUyMjowLjg3MDQ0MzY3NTU2MjEyMDgsJTIyZXhwaXJlcyUyMjoxNzc0NDEwNzYxMjA4JTdE",
+    "intercom.intercom-state-guh50jw4": "{\"app\":{\"openConfig\":{\"unifiedStyling\":true,\"openTo\":\"home\",\"spaces\":[{\"type\":\"home\",\"label\":\"主页\",\"navigationLabel\":\"主页\",\"badge\":null},{\"type\":\"messages\",\"label\":\"消息\",\"navigationLabel\":\"消息\",\"badge\":null}],\"userHasReceivedChecklists\":false,\"userHasLiveNewsfeed\":false,\"userHasTickets\":false},\"selfServeSuggestionsMatch\":false,\"name\":\"DeepSeek\",\"features\":{\"anonymousInboundMessages\":true,\"googleAnalytics\":false,\"hubspotInstalled\":false,\"inboundMessages\":true,\"marketoEnrichmentInstalled\":false,\"googleAnalytics4Integration\":true},\"helpCenterSiteUrl\":\"https://intercom.help/-618e25ebf314\",\"inboundConversationsDisabled\":false,\"isDeveloperWorkspace\":false,\"customGoogleAnalyticsTrackerId\":null},\"launcher\":{\"isLauncherEnabled\":true},\"launcherDiscoveryMode\":{\"hasDiscoveredLauncher\":true},\"launcherSettings\":{\"alignment\":\"right\",\"color\":\"#0f0f0f\",\"colorDark\":\"#919191\",\"hasRequiredFeatures\":true,\"horizontalPadding\":20,\"instantBootEnabled\":true,\"launcherLogoUrl\":null,\"launcherLogoDarkUrl\":null,\"secondaryColor\":\"#f7f8fc\",\"secondaryColorDark\":\"#f7f8fc\",\"showLauncher\":true,\"themeMode\":\"light\",\"updatedAt\":1765765028,\"verticalPadding\":20,\"isLoading\":false},\"user\":{\"role\":\"user\",\"locale\":\"zh-CN\",\"hasConversations\":true},\"message\":{},\"conversations\":{\"byId\":{}},\"openOnBoot\":{\"type\":null,\"metadata\":{},\"lastOpenAtTimestamp\":1765896403770},\"operator\":{\"lastComposerEvent\":0},\"router\":{\"isInitialized\":false,\"navigationQueue\":[]}}",
+    "closeUnsafeEnvWarn": "{\"value\":false,\"__version\":\"0\"}",
+    "__appKit_@deepseek/chat_lastSessionValue": "{\"value\":{\"userIsMuted\":false,\"userMuteUntil\":0,\"loginMethod\":\"code\",\"siderCollapsed\":false},\"__version\":\"0\"}",
+    "__appKit_@deepseek/chat_localePreference": "{\"value\":\"system\",\"__version\":\"0\"}",
+    "__appKit_@deepseek/chat_fg_enableNoIdbCache": "{\"value\":false,\"__version\":\"0\"}",
+    "userToken": "{\"value\":\"FDO5XrB+WWFFZf4gTyYp+WCiLrgINFw9h6DNoXjZRbfBJuvX1MFGqdukFkA16Lh2\",\"__version\":\"0\"}",
+    "debugModelChannel": "{\"value\":\"default\",\"__version\":\"0\"}"
+  },
+  "sessionStorage": {
+    "__tea_session_id_20006317": "{\"sessionId\":\"443958e0-3131-49b2-ba73-ce7365a7ea28\",\"timestamp\":1766634761211}"
+  }
+}

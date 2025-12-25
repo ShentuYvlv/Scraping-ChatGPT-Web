@@ -1,0 +1,82 @@
+[
+  {
+    "name": "_cfuvid",
+    "value": "TbXFj1HfkBwmdtj61s4xcBuYYvH7_NfSxhLajVi5hv8-1765896785800-0.0.1.1-604800000",
+    "domain": ".challenges.cloudflare.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "ds_session_id",
+    "value": "d47738156e1b4f8ebe34010dc7bfacd9",
+    "domain": "chat.deepseek.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Strict"
+  },
+  {
+    "name": "_gc_usr_id_cs0_d0_sec0_part0",
+    "value": "072fb086-0277-4d67-a350-96cbb29a2fd0",
+    "domain": "chat.deepseek.com",
+    "path": "/",
+    "expires": 1770653635,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Strict"
+  },
+  {
+    "name": "HWWAFSESID",
+    "value": "8b6b48e620ad54c0e2b",
+    "domain": "chat.deepseek.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "HWWAFSESTIME",
+    "value": "1765526615459",
+    "domain": "chat.deepseek.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "intercom-device-id-guh50jw4",
+    "value": "22b77e67-b477-442b-b90c-fe98fe8f3aff",
+    "domain": ".deepseek.com",
+    "path": "/",
+    "expires": 1789124353,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": ".thumbcache_6b2e5483f9d858d7c661c5e276b6a6ae",
+    "value": "",
+    "domain": "chat.deepseek.com",
+    "path": "/",
+    "expires": 1801194760.850948,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "smidV2",
+    "value": "20251225115240a64aba8590b9aded74685b43d9d84c5c00e61ffb8b31f1820",
+    "domain": "chat.deepseek.com",
+    "path": "/",
+    "expires": 1801194760.925101,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]
