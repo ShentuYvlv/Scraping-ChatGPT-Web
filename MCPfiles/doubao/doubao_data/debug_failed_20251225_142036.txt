@@ -1,0 +1,12 @@
+id: 0
+event: SSE_HEARTBEAT
+data: {}
+
+id: 0
+event: STREAM_ERROR
+data: {"error_code":710022004,"error_msg":"rate limited","extra":{"decision":"{\"code\":\"10000\",\"from\":\"shark_admin\",\"version\":\"\",\"type\":\"verify\",\"region\":\"cn\",\"subtype\":\"semantic_reasoning\",\"detail\":\"riz24RE48kXtzloNIbWw-hor-iudpuwcgGalGmIYCB7rtUrOJrmTWnjZuQoH0Jl4Wlqb4zmmtrAL2-*Fx8xMGzTKd-xgWaX55eRH2ttMbKOXhJgHlAuNHkq2DVdk7*WL5CUu0mFJ0fxFQEV23jsSbSvak4I*PMiCxLxjyzJrJ9LBZMdaU0QNf6dma2tg55fPxupL29HD31ou9ThfZIUZGpCdIvHZFm*gFndMExYHkCZ2B6mkwLw1nDiCpbzGlRmdqs*0ahfJN-hX3w0xGsJ7usAuQ7xIy84xRotbGs7W-3cUK3UfhAyyX4in2fY76cy0zc-1esVMS1IIqc-5JCYKRbP3jJKey3-pt8Sj5qPyqFNb-wMYKE8IKrsDb8vhblFY3yb*tXHP5UAeBJAadxfVckdWR0nGjRH4g8IunH4K7dq3*NqZLpc6MAWRdVW9KvEa-HrYXexlDq7uXI-PrdwIQtX8hnG3hpeOroB8KYB-p5MAspO1\",\"server_sdk_env\":\"{\\\"idc\\\":\\\"lf\\\",\\\"region\\\":\\\"CN\\\",\\\"server_type\\\":\\\"business\\\"}\",\"log_id\":\"20251225142035CA42DAF5DADF67A14719\",\"verify_scene\":\"doubao_message_web\"}","ack":"1"}}
+
+id: 1
+event: SSE_REPLY_END
+data: {"end_type":3}
+

@@ -4,7 +4,7 @@
     "__close_idb_signal": "1765794232996.508",
     "__appKit_@deepseek/chat_fg_enableLessMaxChunkInterval": "{\"value\":false,\"__version\":\"0\"}",
     "thinkingEnabled": "{\"value\":false,\"__version\":\"2\"}",
-    "__tea_cache_tokens_20006317": "{\"web_id\":\"7582634352996042250\",\"user_unique_id\":\"faef128e-3052-477f-b1aa-148372996f99\",\"timestamp\":1766634761149,\"_type_\":\"default\"}",
+    "__tea_cache_tokens_20006317": "{\"web_id\":\"7582634352996042250\",\"user_unique_id\":\"faef128e-3052-477f-b1aa-148372996f99\",\"timestamp\":1766645675273,\"_type_\":\"default\"}",
     ".thumbcache_6b2e5483f9d858d7c661c5e276b6a6ae": "",
     "__appKit_@deepseek/chat_themePreference": "{\"value\":\"system\",\"__version\":\"0\"}",
     "__appKit_@deepseek/chat_banner": "{\"value\":{\"closedBannerId\":null,\"cachedBannerOptions\":null},\"__version\":\"0\"}",
@@ -26,6 +26,6 @@
     "debugModelChannel": "{\"value\":\"default\",\"__version\":\"0\"}"
   },
   "sessionStorage": {
-    "__tea_session_id_20006317": "{\"sessionId\":\"443958e0-3131-49b2-ba73-ce7365a7ea28\",\"timestamp\":1766634761211}"
+    "__tea_session_id_20006317": "{\"sessionId\":\"7d6f3582-c323-48ed-ba2d-f7ecd4426c74\",\"timestamp\":1766645675322}"
   }
 }

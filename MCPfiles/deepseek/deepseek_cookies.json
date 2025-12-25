@@ -60,21 +60,21 @@
     "sameSite": "Lax"
   },
   {
-    "name": ".thumbcache_6b2e5483f9d858d7c661c5e276b6a6ae",
-    "value": "",
-    "domain": "chat.deepseek.com",
-    "path": "/",
-    "expires": 1801194760.850948,
-    "httpOnly": false,
-    "secure": false,
-    "sameSite": "Lax"
-  },
-  {
     "name": "smidV2",
     "value": "20251225115240a64aba8590b9aded74685b43d9d84c5c00e61ffb8b31f1820",
     "domain": "chat.deepseek.com",
     "path": "/",
     "expires": 1801194760.925101,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": ".thumbcache_6b2e5483f9d858d7c661c5e276b6a6ae",
+    "value": "mmHjgboSQSpYc2TTAxAS5cwBtqBLhAzITKFgnEfdWEXK0FgUh5GTI6k1ErcqVc7hbZDg/f/auVNC2YflTcWJ0Q%3D%3D",
+    "domain": "chat.deepseek.com",
+    "path": "/",
+    "expires": 1801205674.55103,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Lax"

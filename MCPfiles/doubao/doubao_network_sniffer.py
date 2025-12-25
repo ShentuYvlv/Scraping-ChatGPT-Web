@@ -220,6 +220,108 @@ def parse_doubao_raw_data(raw_data: str) -> dict:
         "references": unique_references
     }
 
+
+def is_probably_human_challenge(page, raw_data: str = "") -> bool:
+    """
+    Best-effort detection of captcha / human verification overlays.
+    We intentionally keep this heuristic broad because Doubao's challenge
+    UI may change over time.
+    """
+    try:
+        if raw_data:
+            lowered = raw_data.lower()
+            if any(k in lowered for k in ("captcha", "verify", "verification", "challenge", "geetest")):
+                return True
+    except Exception:
+        pass
+
+    try:
+        # Common embedded challenge providers / iframes
+        iframe_loc = page.locator(
+            'iframe[src*="captcha"], iframe[src*="challenge"], iframe[src*="verify"], iframe[src*="geetest"]'
+        )
+        if iframe_loc.count() > 0:
+            try:
+                if iframe_loc.first.is_visible(timeout=500):
+                    return True
+            except Exception:
+                return True
+
+        # Common DOM markers (ids/classes)
+        marker_loc = page.locator(
+            '[id*="captcha"], [class*="captcha"], [id*="geetest"], [class*="geetest"], [class*="challenge"]'
+        )
+        if marker_loc.count() > 0:
+            try:
+                if marker_loc.first.is_visible(timeout=500):
+                    return True
+            except Exception:
+                return True
+
+        # Common CN texts
+        for t in ("验证码", "安全验证", "完成验证", "人机验证", "滑动验证", "拖动滑块", "验证后继续"):
+            try:
+                # Only treat as challenge if the text is actually visible.
+                if page.get_by_text(t, exact=False).first.is_visible(timeout=500):
+                    return True
+            except Exception:
+                continue
+    except Exception:
+        # If we fail to query DOM (navigation, etc), don't treat as challenge here.
+        return False
+
+    return False
+
+
+def wait_for_human_challenge_clear(page) -> None:
+    """
+   方案1：检测到疑似验证码/拦截后，原地等待用户手动验证，不做 goto/reload/重试导航。
+    """
+    print("\n" + "!" * 60)
+    print("[BLOCK] 🛑 疑似触发验证码/人机验证。")
+    print("[ACTION] 请在脚本打开的浏览器窗口里手动完成验证。")
+    print("[WAIT] 脚本将原地等待验证完成（不会刷新/跳转页面）...")
+    print("!" * 60 + "\n")
+
+    last_notice = 0.0
+    while True:
+        try:
+            input_box = page.locator('textarea[data-testid="chat_input_input"]').first
+            input_ready = False
+            try:
+                input_ready = input_box.count() > 0 and input_box.is_visible(timeout=1000)
+                # Prefer "editable" if available (captcha overlays may keep it visible but not usable)
+                if input_ready:
+                    try:
+                        input_ready = input_box.is_editable(timeout=1000)
+                    except Exception:
+                        # Older Playwright versions may not support is_editable(timeout=...)
+                        input_ready = input_box.is_editable()
+            except Exception:
+                input_ready = False
+
+            # If the input is editable again, we consider verification passed even if
+            # some challenge DOM remnants remain (often hidden).
+            if input_ready:
+                print("[RESUME] ✅ 输入框已恢复可编辑，准备继续...")
+                time.sleep(2)
+                return
+
+            challenge = is_probably_human_challenge(page)
+
+            now = time.time()
+            if now - last_notice > 5:
+                last_notice = now
+                if challenge:
+                    print("[WAIT] 仍在等待验证码/验证界面消失...")
+                else:
+                    print("[WAIT] 输入框尚不可用，继续等待...")
+        except Exception:
+            # Navigation or transient errors; keep waiting.
+            pass
+
+        time.sleep(1.5)
+
 def save_result(prompt, raw_data, url):
     """保存数据到文件，返回是否保存成功（是否有有效内容）"""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -372,8 +474,11 @@ def run_scraper():
             return
 
         # === 提问列表 ===
-        # 读取上一级目录下的 test_input_prompts.txt
-        prompts_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_input_prompts.txt")
+        # Read prompts from repo root (script is under MCPfiles/doubao/)
+        prompts_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "test_input_prompts.txt",
+        )
         questions = []
         if os.path.exists(prompts_path):
             print(f"[INIT] Reading prompts from {prompts_path}")
@@ -470,6 +575,8 @@ def run_scraper():
                                 break # 跳出轮询等待
                             else:
                                 print(f"[BLOCK] 🛑 抓取到数据但解析为空 (Reply Empty)，认定为验证码拦截！")
+                                # 方案1：原地等待用户完成验证码验证，避免马上 goto 导致页面刷新
+                                wait_for_human_challenge_clear(page)
                                 # 清空当前捕获，避免重复处理这条坏数据
                                 page.evaluate("window.__captured_requests__ = []")
                                 # 触发重试逻辑：跳出轮询，外层 while True 会重新开始

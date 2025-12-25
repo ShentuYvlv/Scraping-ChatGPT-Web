@@ -1,7 +1,7 @@
 [
   {
     "name": "hook_slardar_session_id",
-    "value": "202512251140200718B17C5584D821300B",
+    "value": "2025122514530770B6569705E89040FABD",
     "domain": "www.doubao.com",
     "path": "/chat",
     "expires": -1,
@@ -14,7 +14,7 @@
     "value": "zh",
     "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1798170021,
+    "expires": 1798181588,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Strict"
@@ -251,10 +251,10 @@
   },
   {
     "name": "ttwid",
-    "value": "1%7CxbmC1UgGzWHV_cJ3b0vd4jmt8HIGaD44St3Skj0xRNY%7C1766634020%7C92de186742e56e8087358d716b4d62fc6cf52c4f65c8f7d0cc3894ca51ec308e",
+    "value": "1%7CxbmC1UgGzWHV_cJ3b0vd4jmt8HIGaD44St3Skj0xRNY%7C1766645587%7Cecc534b9909d91ef789fd953cb14ac08e232ee44e30b9d8c32baf87ced3fbeed",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1797738021.197538,
+    "expires": 1797749588.137251,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
