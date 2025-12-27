@@ -10,6 +10,9 @@ from playwright.sync_api import sync_playwright
 
 DEEPSEEK_CHAT_URL = "https://chat.deepseek.com/"
 DEEPSEEK_SSE_PATH_SUBSTR = "/api/v0/chat/completion"
+ONLINE_SEARCH_TOGGLE_SELECTOR = (
+    'div[role="button"].ds-toggle-button:has-text("联网搜索")'
+)
 
 # This file lives at MCPfiles/deepseek/*.py, so repo root is 2 levels up.
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -420,6 +423,54 @@ def save_storage_to_file(page, storage_path: str) -> None:
         print(f"[WARN] Failed to save storage: {e}")
 
 
+def ensure_online_search_enabled(page, timeout_ms: int = 5000) -> None:
+    """
+    Ensure DeepSeek "联网搜索" toggle is enabled.
+
+    The toggle button adds `ds-toggle-button--selected` when enabled.
+    """
+    toggle = page.locator(ONLINE_SEARCH_TOGGLE_SELECTOR).first
+    try:
+        if toggle.count() <= 0:
+            print("[WARN] Online search toggle not found; skipping.")
+            return
+    except Exception:
+        print("[WARN] Failed to query online search toggle; skipping.")
+        return
+
+    try:
+        toggle.scroll_into_view_if_needed()
+    except Exception:
+        pass
+
+    def is_enabled() -> bool:
+        try:
+            cls = toggle.get_attribute("class") or ""
+            return "ds-toggle-button--selected" in cls
+        except Exception:
+            return False
+
+    if is_enabled():
+        print("[INFO] Online search already enabled.")
+        return
+
+    print("[INFO] Online search is OFF; enabling...")
+    try:
+        toggle.click(timeout=timeout_ms)
+    except Exception as e:
+        print(f"[WARN] Failed to click online search toggle: {e}")
+        return
+
+    start = time.time()
+    while time.time() - start < max(timeout_ms, 500) / 1000.0:
+        if is_enabled():
+            print("[INFO] Online search enabled.")
+            return
+        time.sleep(0.2)
+
+    print("[WARN] Online search toggle click did not reflect selected state.")
+
+
 def run_scraper() -> None:
     print("[INIT] Starting DeepSeek network sniffer...")
 
@@ -466,6 +517,7 @@ def run_scraper() -> None:
         print("[LOGIN] Please login in the browser window. Script will continue automatically.")
         try:
             page.wait_for_selector("textarea", timeout=0)
+            ensure_online_search_enabled(page)
             save_cookies_from_context(context, SESSION_COOKIES_FILE)
             save_storage_to_file(page, SESSION_STORAGE_FILE)
         except Exception:
@@ -491,6 +543,8 @@ def run_scraper() -> None:
                         page.wait_for_selector("textarea", timeout=0)
                         time.sleep(2)
                         continue
+
+                    ensure_online_search_enabled(page)
 
                     # Reset per-prompt capture buffers on the page.
                     page.evaluate("window.__deepseek_captured__ = []")
