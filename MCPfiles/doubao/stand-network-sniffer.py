@@ -15,6 +15,13 @@ if not os.path.exists(OUTPUT_DIR):
 SESSION_COOKIES_FILE = os.path.join("doubao_cookies.json")
 SESSION_STORAGE_FILE = os.path.join("doubao_storage.json")
 
+# ByteDance VerifyCenter captcha iframe (seen on Doubao):
+# <iframe src="https://rmc.bytedance.com/verifycenter/captcha/v2?...">
+CAPTCHA_IFRAME_SELECTOR = (
+    'iframe[src*="rmc.bytedance.com/verifycenter/captcha"], '
+    'iframe[src*="verifycenter/captcha"]'
+)
+
 # ==========================================
 # 2. JS HOOK 代码 (核心拦截逻辑)
 # ==========================================
@@ -82,6 +89,36 @@ def clean_text_final(text):
     if not text:
         return ""
     return text.strip()
+
+
+def is_captcha_iframe_visible(page) -> bool:
+    try:
+        iframe_loc = page.locator(CAPTCHA_IFRAME_SELECTOR)
+        if iframe_loc.count() <= 0:
+            return False
+        try:
+            return iframe_loc.first.is_visible(timeout=500)
+        except Exception:
+            return True
+    except Exception:
+        return False
+
+
+def wait_for_captcha_iframe_clear(page) -> None:
+    """Wait until the VerifyCenter captcha iframe disappears (best-effort)."""
+    last_notice = 0.0
+    while True:
+        try:
+            if not is_captcha_iframe_visible(page):
+                return
+        except Exception:
+            pass
+
+        now = time.time()
+        if now - last_notice > 5:
+            last_notice = now
+            print("[WAIT] Still waiting for captcha iframe to disappear...")
+        time.sleep(1.5)
 
 def extract_search_info(content_list):
     """
@@ -234,10 +271,10 @@ def save_result(prompt, raw_data, url):
     if not reply_text:
         print(f"[WARN] ⚠️ 解析后回复为空！原始数据长度: {len(raw_data)}")
         # 调试用：保存失败的 raw_data
-        debug_file = os.path.join(OUTPUT_DIR, f"debug_failed_{timestamp}.txt")
-        with open(debug_file, "w", encoding="utf-8") as f:
-            f.write(raw_data)
-        return False
+        # debug_file = os.path.join(OUTPUT_DIR, f"debug_failed_{timestamp}.txt")
+        # with open(debug_file, "w", encoding="utf-8") as f:
+        #     f.write(raw_data)
+        # return False
     else:
         print(f"[INFO] 解析成功，回复长度: {len(reply_text)}")
 
@@ -379,7 +416,7 @@ def run_scraper(prompt_text: str, repeat_times: int = 20):
         # === 循环重复提问 ===
         for i in range(repeat_times):
             current_count = i + 1
-            print(f"\n{'='*50}")
+            print(f"\\n{'='*50}")
             print(f"[ACTION] ({current_count}/{repeat_times}) 开启新对话并提问: {prompt_text}")
             
             # 循环重试当前问题，直到成功 (处理验证码拦截)
@@ -394,16 +431,16 @@ def run_scraper(prompt_text: str, repeat_times: int = 20):
                         page.wait_for_selector('textarea[data-testid="chat_input_input"]', timeout=5000)
                     except:
                         # 超时，说明可能被拦截
-                        print("\n" + "!"*50)
+                        print("\\n" + "!"*50)
                         print("[BLOCK] 🛑 未检测到输入框，可能触发了验证码！")
                         print("[ACTION] 请现在去浏览器窗口手动完成验证/登录。")
-                        print("[WAIT] 脚本正在无限期等待输入框恢复，完成后将自动继续...")
-                        print("!"*50 + "\n")
+                        print("[WAIT] 脚本将实时等待验证码 iframe 消失后自动继续...")
+                        print("!"*50 + "\\n")
                         
-                        # 死等输入框出现
-                        page.wait_for_selector('textarea[data-testid="chat_input_input"]', timeout=0)
-                        print("[RESUME] ✅ 验证通过，输入框已出现，准备重试当前问题...")
-                        time.sleep(2) # 给一点缓冲时间
+                        # 验证通过的判断：验证码 iframe 消失（不再依赖输入框可见/可编辑）
+                        wait_for_captcha_iframe_clear(page)
+                        print("[RESUME] ✅ 验证 iframe 已消失，准备重试当前问题...")
+                        time.sleep(1)
                         continue # 重新开始当前问题的流程
 
                     # 清空 JS 里的缓存
@@ -460,8 +497,11 @@ def run_scraper(prompt_text: str, repeat_times: int = 20):
                                 break # 跳出轮询等待
                             else:
                                 print(f"[BLOCK] 🛑 抓取到数据但解析为空，认定为验证码拦截！")
+                                print("[WAIT] 脚本将实时等待验证码 iframe 消失后自动继续重试...")
+                                wait_for_captcha_iframe_clear(page)
                                 page.evaluate("window.__captured_requests__ = []")
-                                break # 跳出轮询，触发外层重试
+                                # 触发重试逻辑：跳出轮询，外层 while True 会重新开始
+                                break 
                         else:
                             print(f"[INFO] 抓到短数据 ({len(raw_data)} chars)，继续等待...")
                             page.evaluate("window.__captured_requests__ = []")
@@ -482,14 +522,14 @@ def run_scraper(prompt_text: str, repeat_times: int = 20):
         save_cookies_from_context(context, SESSION_COOKIES_FILE)
         save_storage_to_file(page, SESSION_STORAGE_FILE)
 
-        print("\n[FINISH] 任务全部完成。")
+        print("\\n[FINISH] 任务全部完成。")
         time.sleep(5)
 
 if __name__ == "__main__":
     # ==========================================
     # 在这里修改你的提问内容和次数
     # ==========================================
-    MY_PROMPT = "你好"  # 修改这里的话
-    REPEAT_COUNT = 20                     # 修改这里的次数
+    MY_PROMPT = "推荐5款比较火的蛋白粉"  # 修改这里的话
+    REPEAT_COUNT = 2                     # 修改这里的次数
 
     run_scraper(MY_PROMPT, REPEAT_COUNT)

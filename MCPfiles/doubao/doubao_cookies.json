@@ -1,7 +1,7 @@
 [
   {
     "name": "hook_slardar_session_id",
-    "value": "2025122514530770B6569705E89040FABD",
+    "value": "20251227123247E498F09235CF7B3A6BF6",
     "domain": "www.doubao.com",
     "path": "/chat",
     "expires": -1,
@@ -14,7 +14,7 @@
     "value": "zh",
     "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1798181588,
+    "expires": 1798345969,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Strict"
@@ -140,21 +140,11 @@
     "sameSite": "None"
   },
   {
-    "name": "sid_guard",
-    "value": "b79716f9f9f9bf04d67a199a9db74d5c%7C1766220847%7C2592000%7CMon%2C+19-Jan-2026+08%3A54%3A07+GMT",
-    "domain": ".doubao.com",
-    "path": "/",
-    "expires": 1797324849.455646,
-    "httpOnly": true,
-    "secure": false,
-    "sameSite": "Lax"
-  },
-  {
     "name": "uid_tt",
     "value": "73515b0ddc1cdaefda13fa9183e07cbe",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1768812849.455696,
+    "expires": 1771892688.132455,
     "httpOnly": true,
     "secure": false,
     "sameSite": "Lax"
@@ -164,7 +154,7 @@
     "value": "73515b0ddc1cdaefda13fa9183e07cbe",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1768812849.455747,
+    "expires": 1771892688.132489,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
@@ -174,7 +164,7 @@
     "value": "b79716f9f9f9bf04d67a199a9db74d5c",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1768812849.455805,
+    "expires": 1771892688.132519,
     "httpOnly": true,
     "secure": false,
     "sameSite": "Lax"
@@ -184,7 +174,7 @@
     "value": "b79716f9f9f9bf04d67a199a9db74d5c",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1768812849.455857,
+    "expires": 1771892688.132548,
     "httpOnly": true,
     "secure": false,
     "sameSite": "Lax"
@@ -194,17 +184,7 @@
     "value": "b79716f9f9f9bf04d67a199a9db74d5c",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1768812849.455903,
-    "httpOnly": true,
-    "secure": true,
-    "sameSite": "None"
-  },
-  {
-    "name": "session_tlb_tag",
-    "value": "sttt%7C6%7Ct5cW-fn5vwTWehmanbdNXP_________aznGqM9WNAoi1M1n2O1Wkffljqda18Rgtptr_7JrMMxY%3D",
-    "domain": ".doubao.com",
-    "path": "/",
-    "expires": 1768812849.455951,
+    "expires": 1771892688.132576,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
@@ -214,7 +194,7 @@
     "value": "false",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1768812849.456,
+    "expires": 1771892688.132633,
     "httpOnly": true,
     "secure": false,
     "sameSite": "Lax"
@@ -250,11 +230,31 @@
     "sameSite": "Lax"
   },
   {
-    "name": "ttwid",
-    "value": "1%7CxbmC1UgGzWHV_cJ3b0vd4jmt8HIGaD44St3Skj0xRNY%7C1766645587%7Cecc534b9909d91ef789fd953cb14ac08e232ee44e30b9d8c32baf87ced3fbeed",
+    "name": "sid_guard",
+    "value": "b79716f9f9f9bf04d67a199a9db74d5c%7C1766804773%7C5087913%7CTue%2C+24-Feb-2026+00%3A24%3A46+GMT",
     "domain": ".doubao.com",
     "path": "/",
-    "expires": 1797749588.137251,
+    "expires": 1797908775.132367,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "session_tlb_tag",
+    "value": "sttt%7C4%7Ct5cW-fn5vwTWehmanbdNXP_________4FWSfxuSNw1a9nPL0NMG_DuDVgjzJx32jIF3Xke5XI-Q%3D",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1771892688.132604,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "ttwid",
+    "value": "1%7CxbmC1UgGzWHV_cJ3b0vd4jmt8HIGaD44St3Skj0xRNY%7C1766809967%7Cf3b92ec78889b98fdd18595c061d2bd7334b96202acde68138d28eca8a3482ce",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1797913969.13956,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"

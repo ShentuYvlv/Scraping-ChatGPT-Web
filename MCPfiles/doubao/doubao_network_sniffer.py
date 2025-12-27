@@ -15,6 +15,13 @@ if not os.path.exists(OUTPUT_DIR):
 SESSION_COOKIES_FILE = os.path.join("doubao_cookies.json")
 SESSION_STORAGE_FILE = os.path.join("doubao_storage.json")
 
+# ByteDance VerifyCenter captcha iframe (seen on Doubao):
+# <iframe src="https://rmc.bytedance.com/verifycenter/captcha/v2?...">
+CAPTCHA_IFRAME_SELECTOR = (
+    'iframe[src*="rmc.bytedance.com/verifycenter/captcha"], '
+    'iframe[src*="verifycenter/captcha"]'
+)
+
 # ==========================================
 # 2. JS HOOK 代码 (核心拦截逻辑)
 # ==========================================
@@ -273,6 +280,36 @@ def is_probably_human_challenge(page, raw_data: str = "") -> bool:
     return False
 
 
+def is_captcha_iframe_visible(page) -> bool:
+    try:
+        iframe_loc = page.locator(CAPTCHA_IFRAME_SELECTOR)
+        if iframe_loc.count() <= 0:
+            return False
+        try:
+            return iframe_loc.first.is_visible(timeout=500)
+        except Exception:
+            return True
+    except Exception:
+        return False
+
+
+def wait_for_captcha_iframe_clear(page) -> None:
+    """Wait until the VerifyCenter captcha iframe disappears (best-effort)."""
+    last_notice = 0.0
+    while True:
+        try:
+            if not is_captcha_iframe_visible(page):
+                return
+        except Exception:
+            pass
+
+        now = time.time()
+        if now - last_notice > 5:
+            last_notice = now
+            print("[WAIT] Still waiting for captcha iframe to disappear...")
+        time.sleep(1.5)
+
+
 def wait_for_human_challenge_clear(page) -> None:
     """
    方案1：检测到疑似验证码/拦截后，原地等待用户手动验证，不做 goto/reload/重试导航。
@@ -282,40 +319,25 @@ def wait_for_human_challenge_clear(page) -> None:
     print("[ACTION] 请在脚本打开的浏览器窗口里手动完成验证。")
     print("[WAIT] 脚本将原地等待验证完成（不会刷新/跳转页面）...")
     print("!" * 60 + "\n")
-
+    time.sleep(3)
     last_notice = 0.0
     while True:
         try:
-            input_box = page.locator('textarea[data-testid="chat_input_input"]').first
-            input_ready = False
-            try:
-                input_ready = input_box.count() > 0 and input_box.is_visible(timeout=1000)
-                # Prefer "editable" if available (captcha overlays may keep it visible but not usable)
-                if input_ready:
-                    try:
-                        input_ready = input_box.is_editable(timeout=1000)
-                    except Exception:
-                        # Older Playwright versions may not support is_editable(timeout=...)
-                        input_ready = input_box.is_editable()
-            except Exception:
-                input_ready = False
-
-            # If the input is editable again, we consider verification passed even if
-            # some challenge DOM remnants remain (often hidden).
-            if input_ready:
-                print("[RESUME] ✅ 输入框已恢复可编辑，准备继续...")
+            iframe_visible = is_captcha_iframe_visible(page)
+            if not iframe_visible:
+                print("[RESUME] ✅ 验证 iframe 已消失，准备继续...")
                 time.sleep(2)
                 return
-
-            challenge = is_probably_human_challenge(page)
 
             now = time.time()
             if now - last_notice > 5:
                 last_notice = now
-                if challenge:
-                    print("[WAIT] 仍在等待验证码/验证界面消失...")
+                if iframe_visible:
+                    print("[WAIT] 仍在等待验证码 iframe 消失...")
+                elif is_probably_human_challenge(page):
+                    print("[WAIT] 验证相关 DOM 仍存在，继续等待...")
                 else:
-                    print("[WAIT] 输入框尚不可用，继续等待...")
+                    print("[WAIT] 输入框尚未恢复，继续等待...")
         except Exception:
             # Navigation or transient errors; keep waiting.
             pass
@@ -336,10 +358,10 @@ def save_result(prompt, raw_data, url):
     if not reply_text:
         print(f"[WARN] ⚠️ 解析后回复为空！原始数据长度: {len(raw_data)}")
         # 调试用：保存失败的 raw_data
-        debug_file = os.path.join(OUTPUT_DIR, f"debug_failed_{timestamp}.txt")
-        with open(debug_file, "w", encoding="utf-8") as f:
-            f.write(raw_data)
-        return False
+        # debug_file = os.path.join(OUTPUT_DIR, f"debug_failed_{timestamp}.txt")
+        # with open(debug_file, "w", encoding="utf-8") as f:
+        #     f.write(raw_data)
+        # return False
     else:
         print(f"[INFO] 解析成功，回复长度: {len(reply_text)}")
 
@@ -512,11 +534,11 @@ def run_scraper():
                         print("[ACTION] 请现在去浏览器窗口手动完成验证/登录。")
                         print("[WAIT] 脚本正在无限期等待输入框恢复，完成后将自动继续...")
                         print("!"*50 + "\\n")
-                        
-                        # 死等输入框出现
-                        page.wait_for_selector('textarea[data-testid="chat_input_input"]', timeout=0)
-                        print("[RESUME] ✅ 验证通过，输入框已出现，准备重试当前问题...")
-                        time.sleep(2) # 给一点缓冲时间
+
+                        # 验证通过的判断：验证码 iframe 消失（实时检测，自动继续）
+                        wait_for_captcha_iframe_clear(page)
+                        print("[RESUME] ✅ 验证 iframe 已消失，准备重试当前问题...")
+                        time.sleep(1)
                         continue # 重新开始当前问题的流程（重新跳转或直接输入）
 
                     # 清空 JS 里的缓存
