@@ -471,21 +471,10 @@ def ensure_online_search_enabled(page, timeout_ms: int = 5000) -> None:
     print("[WARN] Online search toggle click did not reflect selected state.")
 
 
-def run_scraper() -> None:
+def run_scraper(prompt_text: str, repeat_times: int = 20) -> None:
     print("[INIT] Starting DeepSeek network sniffer...")
-
-    prompts_path = os.path.join(PROJECT_ROOT, "test_input_prompts.txt")
-    questions: List[str] = []
-    if os.path.exists(prompts_path):
-        print(f"[INIT] Reading prompts from {prompts_path}")
-        with open(prompts_path, "r", encoding="utf-8") as f:
-            lines = [line.strip() for line in f if line.strip()]
-        questions = lines[:20]
-    else:
-        print(f"[WARN] Prompts file not found at {prompts_path}, using defaults.")
-        questions = ["你好", "圣诞节是哪一天？"]
-
-    print(f"[INIT] Loaded {len(questions)} prompts.")
+    print(f"[TASK] Prompt: {prompt_text}")
+    print(f"[TASK] Repeat: {repeat_times}")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -523,9 +512,11 @@ def run_scraper() -> None:
         except Exception:
             return
 
-        for idx, q in enumerate(questions):
+        for idx in range(repeat_times):
             print(f"\n{'='*50}")
-            print(f"[ACTION] ({idx+1}/{len(questions)}) New conversation & prompt: {q}")
+            print(
+                f"[ACTION] ({idx + 1}/{repeat_times}) New conversation & prompt: {prompt_text}"
+            )
 
             while True:
                 try:
@@ -552,7 +543,7 @@ def run_scraper() -> None:
 
                     input_box = page.locator("textarea").first
                     input_box.click()
-                    input_box.fill(q)
+                    input_box.fill(prompt_text)
                     time.sleep(0.5)
                     page.keyboard.press("Enter")
                 except Exception as e:
@@ -598,7 +589,7 @@ def run_scraper() -> None:
 
                         if len(raw_data) > 200 or reply_text:
                             is_valid = save_result(
-                                q, raw_data, url, reply_text, search_results
+                                prompt_text, raw_data, url, reply_text, search_results
                             )
                             if is_valid:
                                 print("[SUCCESS] Captured & parsed successfully.")
@@ -635,4 +626,6 @@ def run_scraper() -> None:
 
 
 if __name__ == "__main__":
-    run_scraper()
+    MY_PROMPT = "圣诞节是哪一天？"
+    REPEAT_COUNT = 20
+    run_scraper(MY_PROMPT, REPEAT_COUNT)
