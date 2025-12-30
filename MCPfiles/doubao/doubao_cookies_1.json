@@ -1,7 +1,7 @@
 [
   {
     "name": "hook_slardar_session_id",
-    "value": "202512271605283059196E892AF0170F9A",
+    "value": "20251230184424A7F94B4B326A16291548",
     "domain": "www.doubao.com",
     "path": "/chat",
     "expires": -1,
@@ -14,7 +14,7 @@
     "value": "zh",
     "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1798358730,
+    "expires": 1798627470,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Strict"
@@ -94,7 +94,7 @@
     "value": "cad5931301a54074855ad7128e2e9a5114",
     "domain": "mssdk.bytedance.com",
     "path": "/",
-    "expires": 1767424948.604133,
+    "expires": 1767696282.180128,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
@@ -230,46 +230,14 @@
     "sameSite": "Lax"
   },
   {
-    "name": "verify_mjlnj0x2_DGTOcIt4_A7An_4OQe_AvgH_eWtpXFnPz0LN",
-    "value": "1",
-    "domain": "rmc.bytedance.com",
+    "name": "ttwid",
+    "value": "1%7CNqd7jfz_DSbNsGMyBtGQOYvjRDQRu2VsttgOVS0Pz4Q%7C1767091464%7Cd413bc3ad1880a1acdd14d13646be813a71d64d8704d1845fff674193d4f6c43",
+    "domain": ".doubao.com",
     "path": "/",
-    "expires": 1766904784,
-    "httpOnly": false,
-    "secure": true,
-    "sameSite": "None",
-    "partitionKey": "https://doubao.com",
-    "_crHasCrossSiteAncestor": true
-  },
-  {
-    "name": "tt_scid",
-    "value": "byUSbqGunRvA-1aOy2WrLrnlldOqFhcsioFAGwzo3Sppom8vu0MfwMSB2t3F9xqw88a3",
-    "domain": "mssdk.bytedance.com",
-    "path": "/",
-    "expires": 1767424948.604179,
+    "expires": 1798195470.228751,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
-  },
-  {
-    "name": "tt_scid",
-    "value": "byUSbqGunRvA-1aOy2WrLrnlldOqFhcsioFAGwzo3Sppom8vu0MfwMSB2t3F9xqw88a3",
-    "domain": "www.doubao.com",
-    "path": "/",
-    "expires": 1767424948,
-    "httpOnly": false,
-    "secure": false,
-    "sameSite": "Lax"
-  },
-  {
-    "name": "msToken",
-    "value": "E3wIXvubqSyWEeETqw9J2JX_Omed2ihO-v61vUlsIJR6Zh4nEc6Q7JXgtsdRv_jS4YMSg2oQ8OhE_THdcgvbiG-MEb42ROC0JHI3oqCtCPhe8Rj2TLduAB7ZoMxA0Zlo2vtEnvelab0=",
-    "domain": "www.doubao.com",
-    "path": "/",
-    "expires": 1767425451,
-    "httpOnly": false,
-    "secure": false,
-    "sameSite": "Lax"
   },
   {
     "name": "passport_fe_beating_status",
@@ -282,13 +250,45 @@
     "sameSite": "Lax"
   },
   {
-    "name": "ttwid",
-    "value": "1%7CNqd7jfz_DSbNsGMyBtGQOYvjRDQRu2VsttgOVS0Pz4Q%7C1766822728%7Cb1ba6826a3ae5f24aec4f8d2cdda1674ec34727587b2620a0f2f47639756ee48",
-    "domain": ".doubao.com",
+    "name": "msToken",
+    "value": "IinCixKVCI7yYKwODoVtmvDmVl96SAkXpDLyaCoNnntshFYq4d4jVsei4kTA4l3AlHoQo4FR7Xkg5eZNK29DLChApoUfkO_BP-krwl88490c1kBaBbpF1sOD71TS4HZm7Oxq3szabQk=",
+    "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1797926730.423958,
+    "expires": 1767696276,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "verify_mjlnj0x2_DGTOcIt4_A7An_4OQe_AvgH_eWtpXFnPz0LN",
+    "value": "1",
+    "domain": "rmc.bytedance.com",
+    "path": "/",
+    "expires": 1767177876,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://doubao.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "tt_scid",
+    "value": "cMMYAjWnJRxiYOL7gaCF4u-bGDA0zNhiyYrOw5.2YGqruKKXPr7w6KokyVSnxqgE2ad7",
+    "domain": "mssdk.bytedance.com",
+    "path": "/",
+    "expires": 1767696282.180209,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
+  },
+  {
+    "name": "tt_scid",
+    "value": "cMMYAjWnJRxiYOL7gaCF4u-bGDA0zNhiyYrOw5.2YGqruKKXPr7w6KokyVSnxqgE2ad7",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": 1767696282,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
   }
 ]

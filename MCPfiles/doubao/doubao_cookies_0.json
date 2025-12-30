@@ -1,0 +1,114 @@
+[
+  {
+    "name": "hook_slardar_session_id",
+    "value": "20251230184423D37DAC8D293FD740967E",
+    "domain": "www.doubao.com",
+    "path": "/chat",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ttwid",
+    "value": "1%7Cr0eCwt-T3iTAZRjqbNEBtqylPcivDWahFE522A6H7Vs%7C1767091463%7Ceef60511fbf9551262b898d2bc406203de214c31c0c5e0da7fefce085af3bf89",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1798195468.459569,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "i18next",
+    "value": "zh",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": 1798627469,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Strict"
+  },
+  {
+    "name": "flow_ssr_sidebar_expand",
+    "value": "1",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "s_v_web_id",
+    "value": "verify_mjsgmy2n_riwDlidv_voR1_4X1q_Avnp_oopCD0zosx7U",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": 1772275471,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "verify_mjsgmxls_Q5SzNmyn_c4BV_4MS7_9Rjw_47lGoV7MzmYr",
+    "value": "1",
+    "domain": "rmc.bytedance.com",
+    "path": "/",
+    "expires": 1767177874,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://doubao.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "msToken",
+    "value": "TAmAY7rzjHjz7CNyM_U-7QhM1WQGwOZoQM7bK5Az8v1KsdJF3-vZcYLnWW-atbBmu_G0R0rieTxiYgr_BXmMoJPhQRXHJOKwN7bdYkkFvIVNawUMaTGcteeQ4tQF2Q==",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": 1767696276,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ttcid",
+    "value": "d671654af50544af9d7c4b4e2e6e460228",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": 1767696280,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ttcid",
+    "value": "d671654af50544af9d7c4b4e2e6e460228",
+    "domain": "mssdk.bytedance.com",
+    "path": "/",
+    "expires": 1767696280.69263,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "tt_scid",
+    "value": "dP9BjNk..F7vteh98jnYp2QN8VUPPXcqguUDkEJcdEbC8gfTHnQDwWv1FyeVJkeQ83d1",
+    "domain": "mssdk.bytedance.com",
+    "path": "/",
+    "expires": 1767696280.692714,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "tt_scid",
+    "value": "dP9BjNk..F7vteh98jnYp2QN8VUPPXcqguUDkEJcdEbC8gfTHnQDwWv1FyeVJkeQ83d1",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": 1767696280,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]
