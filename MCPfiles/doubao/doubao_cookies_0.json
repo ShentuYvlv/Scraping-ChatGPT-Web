@@ -1,7 +1,7 @@
 [
   {
     "name": "hook_slardar_session_id",
-    "value": "20251230184423D37DAC8D293FD740967E",
+    "value": "202601011324555E52A9971BA68F3956DD",
     "domain": "www.doubao.com",
     "path": "/chat",
     "expires": -1,
@@ -10,21 +10,11 @@
     "sameSite": "Lax"
   },
   {
-    "name": "ttwid",
-    "value": "1%7Cr0eCwt-T3iTAZRjqbNEBtqylPcivDWahFE522A6H7Vs%7C1767091463%7Ceef60511fbf9551262b898d2bc406203de214c31c0c5e0da7fefce085af3bf89",
-    "domain": ".doubao.com",
-    "path": "/",
-    "expires": 1798195468.459569,
-    "httpOnly": true,
-    "secure": true,
-    "sameSite": "None"
-  },
-  {
     "name": "i18next",
     "value": "zh",
     "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1798627469,
+    "expires": 1798781101,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Strict"
@@ -40,73 +30,221 @@
     "sameSite": "Lax"
   },
   {
-    "name": "s_v_web_id",
-    "value": "verify_mjsgmy2n_riwDlidv_voR1_4X1q_Avnp_oopCD0zosx7U",
-    "domain": "www.doubao.com",
-    "path": "/",
-    "expires": 1772275471,
-    "httpOnly": false,
-    "secure": false,
-    "sameSite": "Lax"
-  },
-  {
-    "name": "verify_mjsgmxls_Q5SzNmyn_c4BV_4MS7_9Rjw_47lGoV7MzmYr",
-    "value": "1",
-    "domain": "rmc.bytedance.com",
-    "path": "/",
-    "expires": 1767177874,
-    "httpOnly": false,
-    "secure": true,
-    "sameSite": "None",
-    "partitionKey": "https://doubao.com",
-    "_crHasCrossSiteAncestor": true
-  },
-  {
     "name": "msToken",
-    "value": "TAmAY7rzjHjz7CNyM_U-7QhM1WQGwOZoQM7bK5Az8v1KsdJF3-vZcYLnWW-atbBmu_G0R0rieTxiYgr_BXmMoJPhQRXHJOKwN7bdYkkFvIVNawUMaTGcteeQ4tQF2Q==",
+    "value": "Nk683QkqaeZ30xbgjIOvhIr_EEOejSF6HrmSfROxA_9Tij614SsufSlFEHXJpri9bJ1JuQmQ7PYwlUulnVl3-zP9-KS-qm1QiLaPmzGa9nhLJ3THHI9sRK0rt7UOcw==",
     "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1767696276,
+    "expires": 1767849797,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Lax"
   },
   {
     "name": "ttcid",
-    "value": "d671654af50544af9d7c4b4e2e6e460228",
+    "value": "d617fe523c7d48b79364112702c599e540",
     "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1767696280,
+    "expires": 1767849802,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Lax"
   },
   {
     "name": "ttcid",
-    "value": "d671654af50544af9d7c4b4e2e6e460228",
+    "value": "d617fe523c7d48b79364112702c599e540",
     "domain": "mssdk.bytedance.com",
     "path": "/",
-    "expires": 1767696280.69263,
+    "expires": 1767849802.457242,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
   },
   {
     "name": "tt_scid",
-    "value": "dP9BjNk..F7vteh98jnYp2QN8VUPPXcqguUDkEJcdEbC8gfTHnQDwWv1FyeVJkeQ83d1",
+    "value": "C4PfDBDfeUubUgqtkDBp818r5-T5OuwESS3QsRjtYBUfMBvGRCmXQB063U6D7OqCdea2",
     "domain": "mssdk.bytedance.com",
     "path": "/",
-    "expires": 1767696280.692714,
+    "expires": 1767849802.457358,
     "httpOnly": true,
     "secure": true,
     "sameSite": "None"
   },
   {
     "name": "tt_scid",
-    "value": "dP9BjNk..F7vteh98jnYp2QN8VUPPXcqguUDkEJcdEbC8gfTHnQDwWv1FyeVJkeQ83d1",
+    "value": "C4PfDBDfeUubUgqtkDBp818r5-T5OuwESS3QsRjtYBUfMBvGRCmXQB063U6D7OqCdea2",
     "domain": "www.doubao.com",
     "path": "/",
-    "expires": 1767696280,
+    "expires": 1767849802,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "s_v_web_id",
+    "value": "verify_mjv026w0_rZRKWmew_XUmr_4KUW_8cOY_aX7R3CjXplXL",
+    "domain": "www.doubao.com",
+    "path": "/",
+    "expires": 1772429028,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "passport_csrf_token",
+    "value": "d5eaf2cc2a0d603b3f7d3ca39e90b283",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1772429028.334601,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "passport_csrf_token_default",
+    "value": "d5eaf2cc2a0d603b3f7d3ca39e90b283",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1772429028.33467,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "odin_tt",
+    "value": "01503115518847de249cee319a25f1adc5f1399b11c954bc7bf8d90469011adafcaa905499435ad0749c334e4afffb9018839e3936666ca50dcb74ce9a18251a",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1798781087.704195,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "n_mh",
+    "value": "8AnMkh3w0ZCUEB29UVmS2REI2zs7fjFWLecNuJ9AeTI",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1777613087.704284,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "sid_guard",
+    "value": "75071f40159c7662164473328041144f%7C1767245082%7C2592000%7CSat%2C+31-Jan-2026+05%3A24%3A42+GMT",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1798349087.704304,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "uid_tt",
+    "value": "a227689eab28e2f628b4aabdea845a8e",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704324,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "uid_tt_ss",
+    "value": "a227689eab28e2f628b4aabdea845a8e",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704341,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "sid_tt",
+    "value": "75071f40159c7662164473328041144f",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704357,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "sessionid",
+    "value": "75071f40159c7662164473328041144f",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704373,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "sessionid_ss",
+    "value": "75071f40159c7662164473328041144f",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704389,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "session_tlb_tag",
+    "value": "sttt%7C9%7CdQcfQBWcdmIWRHMygEEUT__________McJBhRk5oFn-y6fcggh25UHyjfaEelAsgZmycH8RIRg8%3D",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704406,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "is_staff_user",
+    "value": "false",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704423,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "sid_ucp_v1",
+    "value": "1.0.0-KDhlOWE5ZjQ4YThjOTRhMTgwZWFiYzEzZTVmZGFiNDJmYjhlM2Y5M2QKIAjY8cCz-KzsBBCaitjKBhjCsR4gDDDrz-HDBjgHQPQHGgJscSIgNzUwNzFmNDAxNTljNzY2MjE2NDQ3MzMyODA0MTE0NGY",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704438,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ssid_ucp_v1",
+    "value": "1.0.0-KDhlOWE5ZjQ4YThjOTRhMTgwZWFiYzEzZTVmZGFiNDJmYjhlM2Y5M2QKIAjY8cCz-KzsBBCaitjKBhjCsR4gDDDrz-HDBjgHQPQHGgJscSIgNzUwNzFmNDAxNTljNzY2MjE2NDQ3MzMyODA0MTE0NGY",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1769837087.704456,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "ttwid",
+    "value": "1%7CeJEz7FXaak7QM6i6Nl86Xo94Ub60yH_FLvgwvLYvwdk%7C1767245095%7Ccd34a6336521ac4d2c4ebc5f08672f1f10def4e9036a26dd11beb1525fffde6e",
+    "domain": ".doubao.com",
+    "path": "/",
+    "expires": 1798349101.04492,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "passport_fe_beating_status",
+    "value": "true",
+    "domain": ".www.doubao.com",
+    "path": "/",
+    "expires": -1,
     "httpOnly": false,
     "secure": false,
     "sameSite": "Lax"

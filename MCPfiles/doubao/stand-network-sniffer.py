@@ -30,6 +30,20 @@ CAPTCHA_IFRAME_SELECTOR = (
     'iframe[src*="verifycenter/captcha"]'
 )
 
+# Login detection selectors
+LOGIN_MODAL_SELECTOR = 'div[role="dialog"][aria-modal="true"] div[data-testid="login_content"]'
+LOGIN_PHONE_INPUT_SELECTOR = 'input[data-testid="login_phone_number_input"]'
+LOGIN_QR_SWITCHER_SELECTOR = 'div[data-testid="qrcode_switcher"]'
+CHAT_INPUT_SELECTOR = 'textarea[data-testid="chat_input_input"]'
+
+# Login wait config
+LOGIN_WAIT_TIMEOUT_SEC = 180
+LOGIN_POLL_INTERVAL_SEC = 1.5
+
+# Login cookie groups (used to verify login state)
+LOGIN_COOKIE_GROUP_A = ["sessionid", "sessionid_ss"]
+LOGIN_COOKIE_GROUP_B = ["sid_tt", "sid_guard"]
+
 # 随机 User-Agent 池
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -137,16 +151,49 @@ async def wait_for_captcha_iframe_clear(page, worker_id) -> None:
         await asyncio.sleep(1.5) # 异步等待，不阻塞其他账号
 
 # --- Cookie/Storage 管理 (转为 Async) ---
+def read_storage_file(storage_path: str):
+    if not os.path.exists(storage_path):
+        return {}, {}
+    try:
+        with open(storage_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        local_items = data.get("localStorage", {}) or {}
+        session_items = data.get("sessionStorage", {}) or {}
+        if not isinstance(local_items, dict):
+            local_items = {}
+        if not isinstance(session_items, dict):
+            session_items = {}
+        return local_items, session_items
+    except Exception as e:
+        print(f"[WARN] Read storage failed: {e}")
+        return {}, {}
+
+async def add_storage_init_script(page, storage_path: str) -> bool:
+    """Inject storage before first navigation."""
+    local_items, session_items = read_storage_file(storage_path)
+    if not local_items and not session_items:
+        return False
+    payload = {"localItems": local_items, "sessionItems": session_items}
+    payload_json = json.dumps(payload, ensure_ascii=True)
+    script = f"""(() => {{
+        try {{
+            const payload = {payload_json};
+            const localItems = payload && payload.localItems ? payload.localItems : {{}};
+            const sessionItems = payload && payload.sessionItems ? payload.sessionItems : {{}};
+            for (const [k, v] of Object.entries(localItems)) localStorage.setItem(k, v);
+            for (const [k, v] of Object.entries(sessionItems)) sessionStorage.setItem(k, v);
+        }} catch (e) {{
+            console.warn('[INIT] Storage init failed', e);
+        }}
+    }})();"""
+    await page.add_init_script(script)
+    print(f"[INIT] Storage init script installed from {storage_path}")
+    return True
+
 async def load_storage_to_page(page, storage_path: str):
     """还原 Storage 加载逻辑"""
     try:
-        if not os.path.exists(storage_path):
-            return
-        with open(storage_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        
-        local_items = data.get("localStorage", {})
-        session_items = data.get("sessionStorage", {})
+        local_items, session_items = read_storage_file(storage_path)
         
         if local_items:
             await page.evaluate("""(items) => { 
@@ -179,6 +226,92 @@ async def save_cookies_from_context(context, cookies_path: str):
         print(f"[SAVE] Cookies saved to {cookies_path}")
     except Exception as e:
         print(f"[WARN] Save cookies failed: {e}")
+
+def read_cookies_file(cookies_path: str):
+    if not os.path.exists(cookies_path):
+        return []
+    try:
+        with open(cookies_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, list):
+            print(f"[WARN] Cookies file format invalid: {cookies_path}")
+            return []
+        return data
+    except Exception as e:
+        print(f"[WARN] Read cookies failed: {e}")
+        return []
+
+async def is_login_modal_visible(page) -> bool:
+    try:
+        modal = page.locator(LOGIN_MODAL_SELECTOR)
+        count = await modal.count()
+        if count <= 0:
+            return False
+        try:
+            return await modal.first.is_visible(timeout=500)
+        except:
+            return True
+    except:
+        return False
+
+async def is_chat_input_visible(page) -> bool:
+    try:
+        inp = page.locator(CHAT_INPUT_SELECTOR)
+        count = await inp.count()
+        if count <= 0:
+            return False
+        try:
+            return await inp.first.is_visible(timeout=500)
+        except:
+            return True
+    except:
+        return False
+
+def has_login_cookies(cookie_list) -> bool:
+    names = {c.get("name") for c in cookie_list if isinstance(c, dict)}
+    group_a = any(name in names for name in LOGIN_COOKIE_GROUP_A)
+    group_b = any(name in names for name in LOGIN_COOKIE_GROUP_B)
+    return group_a and group_b
+
+async def ensure_logged_in(page, context, cookies_path: str, storage_path: str, worker_id: int, require_login_modal: bool) -> bool:
+    start = datetime.datetime.now().timestamp()
+    last_notice = 0.0
+    seen_login_modal = False
+
+    while True:
+        if await is_captcha_iframe_visible(page):
+            await wait_for_captcha_iframe_clear(page, worker_id)
+
+        login_visible = await is_login_modal_visible(page)
+        if login_visible:
+            seen_login_modal = True
+            now = datetime.datetime.now().timestamp()
+            if now - last_notice > 5:
+                last_notice = now
+                print(f"[Worker-{worker_id}] [LOGIN] 需要登录，请手动完成登录。")
+        else:
+            if await is_chat_input_visible(page):
+                cookies = await context.cookies()
+                if require_login_modal and not seen_login_modal and not has_login_cookies(cookies):
+                    await asyncio.sleep(LOGIN_POLL_INTERVAL_SEC)
+                    continue
+                if not has_login_cookies(cookies):
+                    now = datetime.datetime.now().timestamp()
+                    if now - last_notice > 5:
+                        last_notice = now
+                        print(f"[Worker-{worker_id}] [LOGIN] 发现输入框但登录 Cookie 不完整，继续等待。")
+                    await asyncio.sleep(LOGIN_POLL_INTERVAL_SEC)
+                    continue
+                print(f"[Worker-{worker_id}] [LOGIN] 登录成功。")
+                await save_cookies_from_context(context, cookies_path)
+                await save_storage_from_page(page, storage_path)
+                return True
+
+        if datetime.datetime.now().timestamp() - start > LOGIN_WAIT_TIMEOUT_SEC:
+            print(f"[Worker-{worker_id}] [LOGIN] 等待登录超时。")
+            return False
+
+        await asyncio.sleep(LOGIN_POLL_INTERVAL_SEC)
 
 # ==========================================
 # 4. 数据解析逻辑 (完全还原)
@@ -293,24 +426,27 @@ async def worker_process(worker_id: int, account_config: dict, queue: asyncio.Qu
         cookies_path = account_config['cookies_path']
         storage_path = account_config['storage_path']
         
-        if os.path.exists(cookies_path):
-            with open(cookies_path, "r", encoding="utf-8") as f:
-                try:
-                    await context.add_cookies(json.load(f))
-                except: pass
-        
         page = await context.new_page()
+        await add_storage_init_script(page, storage_path)
         await page.add_init_script(JS_HOOK_CODE)
+
+        cookies = read_cookies_file(cookies_path)
+        storage_local, storage_session = read_storage_file(storage_path)
+        has_saved_creds = bool(cookies) or bool(storage_local) or bool(storage_session)
+        if cookies:
+            try:
+                await context.add_cookies(cookies)
+                print(f"[INIT] Cookies loaded from {cookies_path}")
+            except Exception as e:
+                print(f"[WARN] Add cookies failed: {e}")
         
         print(f"[Worker-{worker_id}] 访问首页...")
         await page.goto("https://www.doubao.com/chat/")
         
-        # --- 3. 加载 Storage 并刷新 (还原) ---
-        # 豆包的登录状态常依赖 localStorage，必须恢复
-        await load_storage_to_page(page, storage_path)
-        if os.path.exists(storage_path):
-            print(f"[Worker-{worker_id}] 刷新页面应用 Storage...")
-            await page.reload()
+        # --- 3. 登录检查/等待 (手动登录) ---
+        if not await ensure_logged_in(page, context, cookies_path, storage_path, worker_id, require_login_modal=not has_saved_creds):
+            print(f"[Worker-{worker_id}] [LOGIN] Exit worker: not logged in.")
+            return
         
         # --- 4. 循环任务处理 ---
         while not queue.empty():
@@ -320,15 +456,18 @@ async def worker_process(worker_id: int, account_config: dict, queue: asyncio.Qu
                 
                 # 检查输入框
                 try:
-                    await page.wait_for_selector('textarea[data-testid="chat_input_input"]', timeout=5000)
+                    await page.wait_for_selector(CHAT_INPUT_SELECTOR, timeout=5000)
                 except:
-                    # 如果找不到输入框，再次检查是否是验证码
                     if await is_captcha_iframe_visible(page):
                         print(f"[Worker-{worker_id}] ⚠️ 发现验证码！")
                         await wait_for_captcha_iframe_clear(page, worker_id)
-                    else:
-                        print(f"[Worker-{worker_id}] ❌ 无法找到输入框且无验证码，可能未登录")
-                        break # 跳出任务循环
+                        continue
+                    if await is_login_modal_visible(page):
+                        if not await ensure_logged_in(page, context, cookies_path, storage_path, worker_id, require_login_modal=True):
+                            break
+                        continue
+                    print(f"[Worker-{worker_id}] ❌ 无法找到输入框且无验证码/登录弹窗")
+                    break # 跳出任务循环
 
                 # 领取任务
                 try:
@@ -343,7 +482,7 @@ async def worker_process(worker_id: int, account_config: dict, queue: asyncio.Qu
 
                 # 输入操作
                 try:
-                    textarea = page.locator('textarea[data-testid="chat_input_input"]').first
+                    textarea = page.locator(CHAT_INPUT_SELECTOR).first
                     await textarea.click()
                     await textarea.fill(prompt)
                     await asyncio.sleep(random.uniform(0.5, 1.2))
